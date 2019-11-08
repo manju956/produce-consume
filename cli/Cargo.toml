@@ -20,6 +20,14 @@ edition = "2018"
 
 [dependencies]
 clap = "2"
+sawtooth-sdk = {git = "https://github.com/hyperledger/sawtooth-sdk-rust"}
+rust-crypto = "0.2.36"
+protobuf = "2"
+rand = "0.4.2"
+hex = "0.3.2"
+hyper = "0.12.11"
+tokio = "0.1.11"
+futures = "0.1.24"
 
 [build-dependencies]
 protoc-rust = "2.0"

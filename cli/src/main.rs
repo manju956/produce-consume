@@ -13,9 +13,18 @@
 // limitations under the License.
 
 extern crate clap;
+extern crate sawtooth_sdk;
+extern crate tokio;
+extern crate futures;
+extern crate hyper;
+extern crate hex;
+extern crate rand;
 
 mod produce_consume;
 mod cli_error;
+mod proto;
+mod sawtooth_helper;
+mod network_helper;
 
 use clap::App;
 use clap::Arg;
