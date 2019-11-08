@@ -24,7 +24,7 @@ fn main() {
     let out_dir = env::var("OUT_DIR").expect("No OUT_DIR env variable");
     let dest_path = Path::new(&out_dir).join(PROTO_DIR_NAME);
 
-    let proto_src_files = glob_simple("protos/*.proto");
+    let proto_src_files = glob_simple("./../protos/*.proto");
 
     println!("{:?}", proto_src_files);
 
@@ -57,7 +57,7 @@ fn main() {
             .iter()
             .map(|a| a.as_ref())
             .collect::<Vec<&str>>(),
-        includes: &["protos"],
+        includes: &["../protos"],
         customize: Customize {
             ..Default::default()
         },
