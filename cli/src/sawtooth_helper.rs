@@ -14,7 +14,9 @@
 
 use crate::produce_consume::PRODUCE_CONSUME;
 use crate::produce_consume::VERSION;
-use std::iter::Iterator;
+use crypto::digest::Digest;
+use crypto::sha2::Sha512;
+use protobuf::{Message, RepeatedField};
 use sawtooth_sdk::{
     messages::{
         batch::{Batch, BatchHeader, BatchList},
@@ -22,9 +24,7 @@ use sawtooth_sdk::{
     },
     signing::{PublicKey, Signer},
 };
-use crypto::sha2::Sha512;
-use crypto::digest::Digest;
-use protobuf::{Message, RepeatedField};
+use std::iter::Iterator;
 
 /// Function to create the ```BatchList``` object, which later is serialized and sent to REST API
 /// Accepts ```Batch``` as a input parameter.

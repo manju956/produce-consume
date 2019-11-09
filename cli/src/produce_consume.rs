@@ -13,20 +13,20 @@
 // limitations under the License.
 
 use crate::cli_error::CliError;
+use crate::network_helper;
 use crate::proto::action::Action;
 use crate::proto::action::Action_Command;
-use sawtooth_sdk::{
-    signing::{create_context, secp256k1::Secp256k1PrivateKey, PrivateKey, Signer},
-};
 use crate::sawtooth_helper;
-use rand::Rng;
-use crypto::sha2::Sha512;
 use crypto::digest::Digest;
-use std::fs::File;
-use std::io::Read;
+use crypto::sha2::Sha512;
 use hex;
 use protobuf::Message;
-use crate::network_helper;
+use rand::Rng;
+use sawtooth_sdk::signing::{create_context, secp256k1::Secp256k1PrivateKey, PrivateKey, Signer};
+use std::env;
+use std::fs::File;
+use std::io::Read;
+use std::io::Write;
 
 pub(crate) const PRODUCE_CONSUME: &str = "produce-consume";
 pub(crate) const VERSION: &str = "1.0";
@@ -35,7 +35,7 @@ pub(crate) fn submit_payload(
     command: &str,
     identifier: &str,
     quantity: &str,
-    url: &str,
+    url: Option<&str>,
     key: &str,
 ) -> Result<(), CliError> {
     let cmd: Action_Command = if command == "PRODUCE" {
@@ -57,18 +57,17 @@ pub(crate) fn submit_payload(
     action.set_command(cmd);
     action.set_identifier(identifier.to_string());
     action.set_quantity(qty);
-    let payload = action.write_to_bytes()
+    let payload = action
+        .write_to_bytes()
         .expect("Couldn't create a command to send to the validator");
 
     let read_key = read_file(key);
     let private_key: Box<dyn PrivateKey> =
         Box::new(Secp256k1PrivateKey::from_hex(&read_key).expect("Unable to load context"));
-    let context = create_context("secp256k1")
-        .expect("Unable to create a secp256k1 context");
+    let context = create_context("secp256k1").expect("Unable to create a secp256k1 context");
     let signer = Signer::new(context.as_ref(), private_key.as_ref());
     // get signer and public key from signer in hex
-    let public_key = signer.get_public_key()
-        .expect("Unable to get public key");
+    let public_key = signer.get_public_key().expect("Unable to get public key");
 
     let output_addresses = [address.clone()];
     let input_addresses = [address.clone()];
@@ -88,11 +87,8 @@ pub(crate) fn submit_payload(
         nonce.to_string(),
     );
     // Create transaction
-    let transaction = sawtooth_helper::create_transaction(
-        &signer,
-        &transaction_header,
-        payload.to_vec()
-    );
+    let transaction =
+        sawtooth_helper::create_transaction(&signer, &transaction_header, payload.to_vec());
     // Create batch header, batch
     let batch = sawtooth_helper::create_batch(&signer, transaction);
     let batches = vec![batch];
@@ -102,7 +98,26 @@ pub(crate) fn submit_payload(
         .write_to_bytes()
         .expect("Unable to write batch list as bytes");
 
-    network_helper::submit_to_rest_api(url, "batches", &raw_bytes)
+    if url.is_some() {
+        network_helper::submit_to_rest_api(url.unwrap(), "batches", &raw_bytes)
+    } else {
+        save_to_file(&raw_bytes);
+        Ok(())
+    }
+}
+
+/// Saves the byte stream to a file
+pub fn save_to_file(bytes: &[u8]) {
+    let current_working_directory =
+        env::current_dir().expect("Error reading current working directory");
+    let file_path = current_working_directory.as_path();
+    write_binary_file(&bytes, file_path.to_str().expect("Unexpected filename"))
+}
+
+/// Write binary data to a file
+pub fn write_binary_file(data: &[u8], filename: &str) {
+    let mut file = File::create(filename).expect("File not found");
+    file.write_all(data).expect("Write binary file failed");
 }
 
 fn compute_address(identifier: &str) -> String {

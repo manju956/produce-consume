@@ -13,18 +13,18 @@
 // limitations under the License.
 
 extern crate clap;
+extern crate futures;
+extern crate hex;
+extern crate hyper;
+extern crate rand;
 extern crate sawtooth_sdk;
 extern crate tokio;
-extern crate futures;
-extern crate hyper;
-extern crate hex;
-extern crate rand;
 
-mod produce_consume;
 mod cli_error;
+mod network_helper;
+mod produce_consume;
 mod proto;
 mod sawtooth_helper;
-mod network_helper;
 
 use clap::App;
 use clap::Arg;
@@ -82,14 +82,16 @@ fn main() {
     let command = matches.value_of("command").unwrap();
     let identifier = matches.value_of("identifier").unwrap();
     let quantity = matches.value_of("quantity").unwrap();
-    let url = matches.value_of("url").unwrap_or("http://localhost:8008");
-    let key = matches.value_of("key").unwrap_or("/etc/sawtooth/keys/validator.priv");
+    let url = matches.value_of("url");
+    let key = matches
+        .value_of("key")
+        .unwrap_or("/etc/sawtooth/keys/validator.priv");
 
     match produce_consume::submit_payload(command, identifier, quantity, url, key) {
         Ok(_) => println!("Successfully submitted the transaction"),
         Err(err) => {
             println!("Unable to submit the transaction {}", err);
             std::process::exit(1);
-        },
+        }
     }
 }

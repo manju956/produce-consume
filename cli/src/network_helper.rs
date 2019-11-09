@@ -12,14 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use hyper::{header, header::HeaderValue, Body, Client, Method, Request, Uri};
 use crate::cli_error::CliError;
 use futures::{future, future::Future, stream::Stream};
-use hyper::{
-    client::ResponseFuture,
-    header::HeaderMap,
-    Error, StatusCode,
-};
+use hyper::{client::ResponseFuture, header::HeaderMap, Error, StatusCode};
+use hyper::{header, header::HeaderValue, Body, Client, Method, Request, Uri};
 use std::{error, fmt};
 use tokio::runtime::current_thread::Runtime;
 
@@ -82,7 +78,7 @@ pub(crate) fn submit_to_rest_api(url: &str, api: &str, raw_bytes: &[u8]) -> Resu
         Ok(response) => {
             let body = read_body_as_string(response.body).expect("Unable to read body as string");
             println!("Received Response from the REST API {}", body);
-        },
+        }
         Err(err) => return Err(CliError::from(err.to_string())),
     };
     Ok(())
@@ -94,9 +90,7 @@ pub(crate) fn submit_to_rest_api(url: &str, api: &str, raw_bytes: &[u8]) -> Resu
 /// Returns result ClientResponse and ClientError.
 /// This is a blocking call. A ```tokio_core``` runner instance is created to block until
 /// ```ResponseFuture``` is complete.
-fn read_response_future(
-    response_fut: ResponseFuture
-) -> Result<ClientResponse, ClientError> {
+fn read_response_future(response_fut: ResponseFuture) -> Result<ClientResponse, ClientError> {
     let future_response = response_fut
         // 'then' waits for future_response to be ready and calls the closure supplied here on
         // Result of evaluated future. Response object is ready when closure is called.
@@ -143,19 +137,19 @@ fn read_body_as_string(body: Body) -> Result<String, ClientError> {
         vector.extend_from_slice(&chunk[..]);
         future::ok::<_, Error>(vector)
     })
-        // 'then' evaluates Future to Result. Note that body should be available already.
-        // Construct a Result of string to be returned when body is available.
-        .then(move |body_as_byte_vector| match body_as_byte_vector {
-            Ok(byte_vector) => {
-                let body =
-                    String::from_utf8(byte_vector).expect("Error reading body byte stream as string");
-                Ok(body)
-            }
-            Err(error) => {
-                println!("Error reading body as string {}", error);
-                Err(ClientError)
-            }
-        })
-        // Wait for completion of task assigned to then
-        .wait()
+    // 'then' evaluates Future to Result. Note that body should be available already.
+    // Construct a Result of string to be returned when body is available.
+    .then(move |body_as_byte_vector| match body_as_byte_vector {
+        Ok(byte_vector) => {
+            let body =
+                String::from_utf8(byte_vector).expect("Error reading body byte stream as string");
+            Ok(body)
+        }
+        Err(error) => {
+            println!("Error reading body as string {}", error);
+            Err(ClientError)
+        }
+    })
+    // Wait for completion of task assigned to then
+    .wait()
 }

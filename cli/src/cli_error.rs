@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::string::ToString;
 use std::error::Error;
 use std::fmt;
+use std::string::ToString;
 
 #[derive(Debug)]
 pub(crate) struct CliError {
