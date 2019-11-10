@@ -40,8 +40,7 @@ fn main() {
                 .long("command")
                 .help("Command either PRODUCE or CONSUME")
                 .takes_value(true)
-                .required(true)
-                .value_names(&["PRODUCE", "CONSUME"]),
+                .required(true),
         )
         .arg(
             Arg::with_name("identifier")

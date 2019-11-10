@@ -108,8 +108,9 @@ pub(crate) fn submit_payload(
 
 /// Saves the byte stream to a file
 pub fn save_to_file(bytes: &[u8]) {
-    let current_working_directory =
+    let mut current_working_directory =
         env::current_dir().expect("Error reading current working directory");
+    current_working_directory.push("default.batch");
     let file_path = current_working_directory.as_path();
     write_binary_file(&bytes, file_path.to_str().expect("Unexpected filename"))
 }
