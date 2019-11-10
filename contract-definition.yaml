@@ -1,0 +1,11 @@
+name: produce-consume
+version: '1.0'
+wasm: processor/target/wasm32-unknown-unknown/release/produce-consume.wasm
+inputs:
+  - 'ce2292'
+  - 'cad11d'
+  - '00ec03'
+outputs:
+  - 'ce2292'
+  - 'cad11d'
+  - '00ec03'
