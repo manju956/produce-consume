@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub(crate) mod handler;
+pub mod handler;
 pub(crate) mod payload;
 
 cfg_if! {

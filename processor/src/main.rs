@@ -35,7 +35,7 @@ cfg_if! {
         use log4rs::config::{Appender, Config, Root};
         use log4rs::encode::pattern::PatternEncoder;
         use sawtooth_sdk::processor::TransactionProcessor;
-        use produce_consume::handler::ProduceConsumeHandler;
+        use crate::produce_consume::handler::ProduceConsumeHandler;
     }
 }
 

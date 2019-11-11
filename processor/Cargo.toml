@@ -18,6 +18,14 @@ version = "0.1.0"
 authors = ["Walmart Inc."]
 edition = "2018"
 
+[lib]
+name = "produce_consume"
+path = "src/lib.rs"
+
+[[bin]]
+name = "produce-consume"
+path = "src/main.rs"
+
 [dependencies]
 protobuf = "2"
 

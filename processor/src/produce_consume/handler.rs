@@ -34,14 +34,14 @@ cfg_if! {
 const PRODUCE_CONSUME: &str = "produce-consume";
 const VERSION: &str = "1.0";
 
-pub(crate) struct ProduceConsumeHandler {
+pub struct ProduceConsumeHandler {
     family_name: String,
     family_versions: Vec<String>,
     namespaces: Vec<String>,
 }
 
 impl ProduceConsumeHandler {
-    pub(crate) fn new() -> ProduceConsumeHandler {
+    pub fn new() -> ProduceConsumeHandler {
         ProduceConsumeHandler {
             family_name: PRODUCE_CONSUME.to_string(),
             family_versions: vec![VERSION.to_string()],
