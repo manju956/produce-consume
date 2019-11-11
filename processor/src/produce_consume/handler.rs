@@ -68,7 +68,7 @@ impl TransactionHandler for ProduceConsumeHandler {
         request: &TpProcessRequest,
         context: &mut dyn TransactionContext,
     ) -> Result<(), ApplyError> {
-        let payload = match ProduceConsumePayload::new(request.get_payload()) {
+        let payload = match ProduceConsumePayload::new(&request.get_payload()) {
             Ok(decoded) => decoded,
             Err(err) => return Err(err),
         };

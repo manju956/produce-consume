@@ -32,7 +32,8 @@ pub(crate) struct ProduceConsumePayload {
 
 impl ProduceConsumePayload {
     pub(crate) fn new(raw_bytes: &[u8]) -> Result<ProduceConsumePayload, ApplyError> {
-        let parsed_payload: Action = match parse_from(raw_bytes) {
+        warn!("Payload in raw is {:?}", &raw_bytes);
+        let parsed_payload: Action = match parse_from(&raw_bytes) {
             Ok(result) => result,
             Err(e) => return Err(e),
         };

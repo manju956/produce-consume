@@ -54,12 +54,17 @@ pub(crate) fn submit_payload(
     };
 
     let mut action: Action = Action::new();
+    println!("Command is {:?}", cmd.clone());
     action.set_command(cmd);
     action.set_identifier(identifier.to_string());
     action.set_quantity(qty);
     let payload = action
         .write_to_bytes()
         .expect("Couldn't create a command to send to the validator");
+
+    println!("Payload in raw is {:?}", &payload);
+    let parsed_payload: Action = parse_from(&payload).expect("Cannot");
+    println!("Payload is {:?}", parsed_payload);
 
     let read_key = read_file(key);
     let private_key: Box<dyn PrivateKey> =
@@ -104,6 +109,15 @@ pub(crate) fn submit_payload(
         save_to_file(&raw_bytes);
         Ok(())
     }
+}
+
+fn parse_from<T>(data: &[u8]) -> Result<T, ()>
+    where
+        T: protobuf::Message,
+{
+    protobuf::parse_from_bytes(&data).map_err(|err| {
+        println!("Invalid error: Failed to parse the payload: {:?}", err);
+    })
 }
 
 /// Saves the byte stream to a file
