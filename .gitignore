@@ -17,3 +17,4 @@
 **/target
 **/*.rs.bk
 *.lock
+*.batch
