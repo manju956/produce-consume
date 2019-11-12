@@ -35,7 +35,7 @@ sabre-sdk = {git = "https://github.com/hyperledger/sawtooth-sabre"}
 rust-crypto-wasm = "0.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-sawtooth-sdk = {git = "https://github.com/hyperledger/sawtooth-sdk-rust"}
+sawtooth-sdk = { version = "0.3.0" }
 clap = "2"
 rust-crypto = "0.2.36"
 log = "0.3.0"
