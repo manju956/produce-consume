@@ -33,7 +33,7 @@ pub(crate) struct ProduceConsumePayload {
 impl ProduceConsumePayload {
     pub(crate) fn new(raw_bytes: &[u8]) -> Result<ProduceConsumePayload, ApplyError> {
         warn!("Payload in raw is {:?}", &raw_bytes);
-        let parsed_payload: Action = match parse_from(&raw_bytes) {
+        let parsed_payload: Action = match parse_from(raw_bytes) {
             Ok(result) => result,
             Err(e) => return Err(e),
         };
@@ -61,7 +61,7 @@ fn parse_from<T>(data: &[u8]) -> Result<T, ApplyError>
 where
     T: protobuf::Message,
 {
-    protobuf::parse_from_bytes(&data).map_err(|err| {
+    protobuf::parse_from_bytes(data).map_err(|err| {
         warn!("Invalid error: Failed to parse the payload: {:?}", err);
         ApplyError::InvalidTransaction(format!("Failed to unmarshal payload: {:?}", err))
     })

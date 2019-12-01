@@ -62,9 +62,9 @@ pub(crate) fn submit_payload(
         .write_to_bytes()
         .expect("Couldn't create a command to send to the validator");
 
-    println!("Payload in raw is {:?}", &payload);
+    println!("Payload in raw is {:?}", payload.to_vec());
     let parsed_payload: Action = parse_from(&payload).expect("Cannot");
-    println!("Payload is {:?}", parsed_payload);
+    println!("Payload is {:?} {:?} {:?}", parsed_payload.get_command(), parsed_payload.get_identifier(), parsed_payload.get_quantity());
 
     let read_key = read_file(key);
     let private_key: Box<dyn PrivateKey> =

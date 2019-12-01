@@ -32,7 +32,6 @@ services:
         sawset genesis  -k /etc/sawtooth/keys/validator.priv && \
         sawset proposal create \
           -k /etc/sawtooth/keys/validator.priv \
-          sawtooth.swa.administrators=$$(cat /etc/sawtooth/keys/validator.pub) \
           sawtooth.consensus.algorithm.name=Devmode \
           sawtooth.consensus.algorithm.version=0.1 \
           -o config.batch && \
@@ -75,21 +74,6 @@ services:
       devmode-engine-rust -v --connect tcp://validator:5050
     stop_signal: SIGKILL
 
-  sabre-tp:
-    image: hyperledger/sawtooth-sabre-tp:chime
-    container_name: sabre-tp
-    entrypoint: sawtooth-sabre -vvv -C tcp://validator:4004
-
-  sabre-cli:
-    image: hyperledger/sawtooth-sabre-cli:chime
-    container_name: sabre-cli
-    volumes:
-      - keys:/keys
-      - .:/project
-    entrypoint: "bash -c \"\
-      tail -f /dev/null \
-      \""
-
   processor:
     container_name: pc-processor
     build:
@@ -100,8 +84,8 @@ services:
     command: "bash -c \"\
     rustup update && \
     rustup default nightly && \
-    rustup target add wasm32-unknown-unknown --toolchain nightly && \
-    cargo build --target wasm32-unknown-unknown --release \
+    cargo build && \
+    RUST_BACKTRACE=1 ./target/debug/produce-consume -C tcp://validator:4004 -vvv
     \""
 
   cli:

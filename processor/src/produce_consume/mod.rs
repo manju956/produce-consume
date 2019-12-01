@@ -38,7 +38,7 @@ cfg_if! {
 ///
 /// This method is public only within the crate.
 #[cfg(target_arch = "wasm32")]
-pub(crate) fn apply(
+pub fn apply(
     request: &TpProcessRequest,
     context: &mut dyn TransactionContext,
 ) -> Result<bool, ApplyError> {
@@ -52,8 +52,8 @@ pub(crate) fn apply(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
 // No mangle is for the no compiler optimization
+#[cfg(target_arch = "wasm32")]
 #[no_mangle]
 pub unsafe fn entrypoint(payload: WasmPtr, signer: WasmPtr, signature: WasmPtr) -> i32 {
     // Implement the apply method, this is the core business logic part of the Sabre
