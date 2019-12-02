@@ -66,6 +66,11 @@ pub(crate) fn submit_payload(
     let parsed_payload: Action = parse_from(&payload).expect("Cannot");
     println!("Payload is {:?} {:?} {:?}", parsed_payload.get_command(), parsed_payload.get_identifier(), parsed_payload.get_quantity());
 
+    if url.is_none() {
+        save_to_file(&payload);
+        return Ok(());
+    }
+
     let read_key = read_file(key);
     let private_key: Box<dyn PrivateKey> =
         Box::new(Secp256k1PrivateKey::from_hex(&read_key).expect("Unable to load context"));
@@ -104,11 +109,9 @@ pub(crate) fn submit_payload(
         .expect("Unable to write batch list as bytes");
 
     if url.is_some() {
-        network_helper::submit_to_rest_api(url.unwrap(), "batches", &raw_bytes)
-    } else {
-        save_to_file(&raw_bytes);
-        Ok(())
+        return network_helper::submit_to_rest_api(url.unwrap(), "batches", &raw_bytes);
     }
+    Ok(())
 }
 
 fn parse_from<T>(data: &[u8]) -> Result<T, ()>
