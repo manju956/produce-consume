@@ -65,6 +65,16 @@ sends the generated `default.batch` (found in the root folder `produce-consume`)
 to the `WASM` smart-contract. A sample `contract-definition.yaml` is also 
 submitted to the network. Note that the directory paths are hardcoded now.
 
+## Event handler
+
+To add the event handler, run the command from the folder [events](./events)
+
+```shell_script
+$ docker-compose -f docker-compose-go.yaml up
+```
+
+This will bring up the handler written in Go.
+
 ## Debug
 
 A debug docker-compose file for running the smart-contract as a Hyperledger
