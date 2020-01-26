@@ -17,6 +17,11 @@ version: "3.6"
 volumes:
   keys:
 
+# Create a network, this will be used for adding more containers later
+networks:
+  localnet:
+    name: localnet
+
 services:
   validator:
     image: hyperledger/sawtooth-validator:chime
@@ -25,6 +30,8 @@ services:
       - keys:/keys
     expose:
       - 4004
+    networks:
+      localnet:
     entrypoint: "bash -c \"\
         sawadm keygen && \
         sawtooth keygen && \
@@ -51,11 +58,15 @@ services:
       - 8008
     ports:
       - "8008:8008"
+    networks:
+      localnet:
     entrypoint: sawtooth-rest-api --connect tcp://validator:4004 --bind rest-api:8008 -vv
 
   shell:
     image: hyperledger/sawtooth-shell:chime
     container_name: shell
+    networks:
+      localnet:
     entrypoint: "bash -c \"\
         sawtooth keygen && \
         tail -f /dev/null \
@@ -64,6 +75,8 @@ services:
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:chime
     container_name: settings-tp
+    networks:
+      localnet:
     entrypoint: settings-tp -vv --connect tcp://validator:4004
 
   devmode-rust:
@@ -71,6 +84,8 @@ services:
     container_name: devmode-engine
     depends_on:
       - validator
+    networks:
+      localnet:
     command: |
       devmode-engine-rust -v --connect tcp://validator:5050
     stop_signal: SIGKILL
@@ -78,6 +93,8 @@ services:
   sabre-tp:
     image: hyperledger/sawtooth-sabre-tp:chime
     container_name: sabre-tp
+    networks:
+      localnet:
     entrypoint: sawtooth-sabre -vvv -C tcp://validator:4004
 
   sabre-cli:
@@ -86,6 +103,8 @@ services:
     volumes:
       - keys:/keys
       - .:/project
+    networks:
+      localnet:
     entrypoint: "bash -c \"\
       tail -f /dev/null \
       \""
@@ -97,6 +116,8 @@ services:
     volumes:
       - .:/project
     working_dir: /project/processor/
+    networks:
+      localnet:
     command: "bash -c \"\
     rustup update && \
     rustup default nightly && \
@@ -112,6 +133,8 @@ services:
       - .:/project
       - keys:/keys
     working_dir: /project/cli/
+    networks:
+      localnet:
     command: "bash -c \"\
     cargo build && \
     tail -f /dev/null \
