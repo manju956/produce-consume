@@ -14,20 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-value=`cat /keys/validator.pub`
-echo $value
+onwer_key=$(cat /keys/validator.pub)
+echo "${onwer_key}"
 
 # Create the contract registry
-sabre cr --create produce-consume --owner $value --url http://rest-api:8008 --key /keys/validator
+sabre cr --create produce-consume --owner "${onwer_key}" --url http://rest-api:8008 --key /keys/validator
 
 # Upload the contract definition language
 sabre upload --filename contract-definition.yaml --url http://rest-api:8008 --key /keys/validator
 
 # Create namespace registry and set contract permissions
-sabre ns --create ce2292 --owner $value --url http://rest-api:8008 --key /keys/validator
+sabre ns --create ce2292 --owner "${onwer_key}" --url http://rest-api:8008 --key /keys/validator
 
 sabre perm ce2292 produce-consume --read --write --url http://rest-api:8008 --key /keys/validator
 
-sabre ns --create cad11d --owner $value --url http://rest-api:8008 --key /keys/validator
+sabre ns --create cad11d --owner "${onwer_key}" --url http://rest-api:8008 --key /keys/validator
 
 sabre perm cad11d produce-consume --read --url http://rest-api:8008 --key /keys/validator

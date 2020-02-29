@@ -18,3 +18,4 @@
 **/*.rs.bk
 *.lock
 *.batch
+sawtooth-sabre

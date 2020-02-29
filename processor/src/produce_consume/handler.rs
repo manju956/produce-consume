@@ -83,7 +83,7 @@ impl TransactionHandler for ProduceConsumeHandler {
             Err(err) => return Err(ApplyError::InternalError(err.to_string())),
         };
         // Deserialize the value
-        let value = match raw_value {
+        let value = match &raw_value {
             Some(present) => {
                 let mut array: [u8; 4] = [0; 4];
                 array.copy_from_slice(&present[..4]);
@@ -93,7 +93,7 @@ impl TransactionHandler for ProduceConsumeHandler {
         };
         info!("Read the value {}: {}", &payload.get_identifier(), value);
     
-        context.add_event(String::from("input_values"), Vec::new(), &raw_value.unwrap());
+        context.add_event(String::from("input_values"), Vec::new(), &raw_value.unwrap())?;
 
         // Check for overflow scenarios
         let new_value = match payload.get_command() {
